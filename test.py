@@ -4,9 +4,19 @@ _intervals = [1, 9 / 8, 5 / 4, 4 / 3, 3 / 2, 5 / 3, 15 / 8, 2]
 
 
 def _compute_interval(n_semitones):
-    return _intervals[
-        n_semitones
+    ratio = _intervals[
+        abs(n_semitones)
     ]
+    if n_semitones < 0:
+        return 1 / ratio
+    return ratio
+
+
+@pytest.fixture(
+    name="state"
+)
+def make_state():
+    return State(100, 0)
 
 
 class State:
@@ -25,21 +35,51 @@ class State:
 @pytest.mark.parametrize(
     "note, ratio",
     [
-        (1, 1),
-        (2, 9 / 8),
-        (3, 5 / 4),
-        (4, 4 / 3),
-        (5, 3 / 2),
-        (6, 5 / 3),
-        (7, 15 / 8),
-        (8, 2),
+        (0, 1),
+        (1, 9 / 8),
+        (2, 5 / 4),
+        (3, 4 / 3),
+        (4, 3 / 2),
+        (5, 5 / 3),
+        (6, 15 / 8),
+        (7, 2),
     ]
 )
-def test_modify(
+def test_octave(
         note,
-        ratio
+        ratio,
+        state
 ):
-    state = State(100, 1)
     assert state(note) == 100 * ratio
     assert state.frequency == 100 * ratio
     assert state.note == note
+
+
+@pytest.mark.parametrize(
+    "note, ratio",
+    [
+        (0, 1),
+        (-1, 8 / 9),
+        (-2, 4 / 5),
+        (-3, 3 / 4),
+        (-4, 2 / 3),
+        (-5, 3 / 5),
+        (-6, 8 / 15),
+        (-7, 0.5),
+    ]
+)
+def test_inverse(
+        note,
+        ratio,
+        state
+):
+    state = State(100, 0)
+    assert state(note) == 100 * ratio
+    assert state.frequency == 100 * ratio
+    assert state.note == note
+
+
+def test_shift(state):
+    state(2)
+    state(1)
+    assert state(0) != 100
