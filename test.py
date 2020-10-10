@@ -1,6 +1,6 @@
 import pytest
 
-_intervals = [1, 9 / 8, 5 / 4]
+_intervals = [1, 9 / 8, 5 / 4, 4 / 3, 3 / 2, 5 / 3, 15 / 8, 2]
 
 
 def _compute_interval(n_semitones):
@@ -25,8 +25,14 @@ class State:
 @pytest.mark.parametrize(
     "note, ratio",
     [
+        (1, 1),
         (2, 9 / 8),
-        (3, 5 / 4)
+        (3, 5 / 4),
+        (4, 4 / 3),
+        (5, 3 / 2),
+        (6, 5 / 3),
+        (7, 15 / 8),
+        (8, 2),
     ]
 )
 def test_modify(
@@ -37,13 +43,3 @@ def test_modify(
     assert state(note) == 100 * ratio
     assert state.frequency == 100 * ratio
     assert state.note == note
-
-# 1st - 1
-# 2nd - 9/8
-# 3rd - 5/4
-# 4th - 4/3
-# Perfect 5th - 3/2
-# Octave - 2
-# 6th - 5/3
-# 7th - 15/8
-# 8th 2/1
