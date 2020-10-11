@@ -1,13 +1,20 @@
 import pytest
 
-_intervals = [1, 9 / 8, 5 / 4, 4 / 3, 3 / 2, 5 / 3, 15 / 8, 2]
+_intervals = [1, 256 / 243, 9 / 8, 6 / 5, 5 / 4, 4 / 3, 25 / 18, 3 / 2, 8 / 5, 5 / 3, 9 / 5, 15 / 8, 2]
+
+
+def test_intervals():
+    last = _intervals[0]
+    for interval in _intervals[1:]:
+        assert interval > last
+        last = interval
 
 
 def _compute_interval(n_semitones):
     is_negative = n_semitones < 0
     n_semitones = abs(n_semitones)
-    n_octaves = n_semitones // 7
-    n_semitones = n_semitones % 7
+    n_octaves = n_semitones // 12
+    n_semitones = n_semitones % 12
     octave_modifier = 2 ** n_octaves
     ratio = octave_modifier * _intervals[
         n_semitones
@@ -38,23 +45,32 @@ class State:
         return self.frequency
 
 
+@pytest.mark.parametrize(
+    "note, ratio",
+    [
+        (14, 18 / 8),
+        (-14, 9 / 16)
+    ]
+)
 def test_octaves(
-        state
+        state,
+        note,
+        ratio
 ):
-    assert state(8) == 1 * 18 / 8
+    assert state(note) == ratio
 
 
 @pytest.mark.parametrize(
     "note, ratio",
     [
         (0, 1),
-        (1, 9 / 8),
-        (2, 5 / 4),
-        (3, 4 / 3),
-        (4, 3 / 2),
-        (5, 5 / 3),
-        (6, 15 / 8),
-        (7, 2),
+        (2, 9 / 8),
+        (4, 5 / 4),
+        (5, 4 / 3),
+        (7, 3 / 2),
+        (9, 5 / 3),
+        (11, 15 / 8),
+        (12, 2),
     ]
 )
 def test_simple(
@@ -71,13 +87,13 @@ def test_simple(
     "note, ratio",
     [
         (0, 1),
-        (-1, 8 / 9),
-        (-2, 4 / 5),
-        (-3, 3 / 4),
-        (-4, 2 / 3),
-        (-5, 3 / 5),
-        (-6, 8 / 15),
-        (-7, 0.5),
+        (-2, 8 / 9),
+        (-4, 4 / 5),
+        (-5, 3 / 4),
+        (-7, 2 / 3),
+        (-9, 3 / 5),
+        (-11, 8 / 15),
+        (-12, 0.5),
     ]
 )
 def test_inverse(
