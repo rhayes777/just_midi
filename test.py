@@ -16,9 +16,10 @@ def _compute_interval(n_semitones):
     n_octaves = n_semitones // 12
     n_semitones = n_semitones % 12
     octave_modifier = 2 ** n_octaves
-    ratio = octave_modifier * _intervals[
+    interval_ratio = _intervals[
         n_semitones
     ]
+    ratio = octave_modifier * interval_ratio
     if is_negative:
         ratio = 1 / ratio
 
@@ -49,7 +50,7 @@ class State:
     "note, ratio",
     [
         (14, 18 / 8),
-        (-14, 9 / 16)
+        (-14, 8 / 18)
     ]
 )
 def test_octaves(
