@@ -48,6 +48,14 @@ class Input:
         pygame.KEYUP: "note_off"
     }
 
+    def __init__(
+            self,
+            channel=0,
+            velocity=50
+    ):
+        self.channel = channel
+        self.velocity = velocity
+
     def __call__(self):
         messages = list()
         events = pygame.event.get()
@@ -58,9 +66,9 @@ class Input:
                 messages.append(
                     mido.Message(
                         message_type,
-                        channel=channel,
+                        channel=self.channel,
                         note=note,
-                        velocity=velocity
+                        velocity=self.velocity
                     )
                 )
             if event.key == pygame.K_ESCAPE:
@@ -68,15 +76,27 @@ class Input:
         return messages
 
 
+class Runner:
+    def __init__(self, input_, output_):
+        self._input = input_
+        self._output = output_
+        self.velocity = 50
+        self.channel = 0
+
+    def run(self):
+        play = True
+        while play:
+            clock.tick(40)
+            try:
+                for message in self._input():
+                    self._output.send(message)
+            except StopPlay:
+                play = False
+
+
 if __name__ == "__main__":
-    velocity = 50
-    channel = 0
-    play = True
-    input_ = Input()
-    while play:
-        clock.tick(40)
-        try:
-            for message in input_():
-                output.send(message)
-        except StopPlay:
-            play = False
+    runner = Runner(
+        input_=Input(),
+        output_=output
+    )
+    runner.run()
