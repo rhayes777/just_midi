@@ -32,3 +32,19 @@ def test_frequency_for_note_number(
     assert interval.frequency_for_note_number(
         number
     ) == pytest.approx(frequency, rel=0.001)
+
+
+@pytest.mark.parametrize(
+    "number, frequency",
+    [
+        (69, 440),
+        (0, 8.18),
+        (127, 12543.85)
+    ]
+)
+def test_note_number_for_frequency(
+        number, frequency
+):
+    assert interval.note_number_for_frequency(
+        frequency
+    ) == pytest.approx(number, abs=0.01)

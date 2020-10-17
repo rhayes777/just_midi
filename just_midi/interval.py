@@ -1,3 +1,4 @@
+import math
 from abc import abstractmethod
 
 
@@ -82,3 +83,10 @@ def frequency_for_note_number(number):
     return a_frequency * EqualTemperamentRatio(
         number - a_number
     )
+
+
+base_frequency = frequency_for_note_number(0)
+
+
+def note_number_for_frequency(frequency):
+    return 12 * (math.log2(frequency) - math.log2(base_frequency))
