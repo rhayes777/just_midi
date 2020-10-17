@@ -74,3 +74,11 @@ class EqualTemperamentRatio(AbstractRatio):
     @property
     def interval_ratio(self):
         return 2 ** (self.remainder / 12)
+
+
+def frequency_for_note_number(number):
+    a_frequency = 440
+    a_number = 69
+    return a_frequency * EqualTemperamentRatio(
+        number - a_number
+    )
