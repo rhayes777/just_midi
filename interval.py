@@ -1,4 +1,4 @@
-_intervals = [1, 256 / 243, 9 / 8, 6 / 5, 5 / 4, 4 / 3, 25 / 18, 3 / 2, 8 / 5, 5 / 3, 9 / 5, 15 / 8, 2]
+from abc import abstractmethod
 
 
 class State:
@@ -8,23 +8,67 @@ class State:
 
     def __call__(self, note):
         n_semitones = note - self.note
-        interval = _compute_interval(n_semitones)
         self.note = note
-        self.frequency *= interval
+        self.frequency *= JustRatio(n_semitones)
         return self.frequency
 
 
-def _compute_interval(n_semitones):
-    is_negative = n_semitones < 0
-    n_semitones = abs(n_semitones)
-    n_octaves = n_semitones // 12
-    n_semitones = n_semitones % 12
-    octave_modifier = 2 ** n_octaves
-    interval_ratio = _intervals[
-        n_semitones
-    ]
-    ratio = octave_modifier * interval_ratio
-    if is_negative:
-        ratio = 1 / ratio
+class AbstractRatio:
+    def __init__(self, n_semitones):
+        self._n_semitones = n_semitones
 
-    return ratio
+    @property
+    def _abs_semitones(self):
+        return abs(self._n_semitones)
+
+    @property
+    def is_negative(self):
+        return self._n_semitones < 0
+
+    @property
+    def n_octaves(self):
+        return self._abs_semitones // 12
+
+    @property
+    def remainder(self):
+        return self._abs_semitones % 12
+
+    @property
+    def octave_modifier(self):
+        return 2 ** self.n_octaves
+
+    @property
+    @abstractmethod
+    def interval_ratio(self):
+        pass
+
+    @property
+    def ratio(self):
+        ratio = self.octave_modifier * self.interval_ratio
+        if self.is_negative:
+            ratio = 1 / ratio
+
+        return ratio
+
+    def __float__(self):
+        return self.ratio
+
+    def __mul__(self, other):
+        return float(self) * other
+
+    def __rmul__(self, other):
+        return other * float(self)
+
+
+class JustRatio(AbstractRatio):
+    @property
+    def interval_ratio(self):
+        return self._intervals[
+            self.remainder
+        ]
+
+    _intervals = [1., 256 / 243, 9 / 8, 6 / 5, 5 / 4, 4 / 3, 25 / 18, 3 / 2, 8 / 5, 5 / 3, 9 / 5, 15 / 8, 2.]
+
+
+def _compute_equal_temperament_ratio(n_semitones):
+    is_negative = n_semitones < 0

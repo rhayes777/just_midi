@@ -1,11 +1,11 @@
 import pytest
 
-from interval import State, _intervals
+from interval import State, JustRatio
 
 
 def test_intervals():
-    last = _intervals[0]
-    for interval in _intervals[1:]:
+    last = JustRatio._intervals[0]
+    for interval in JustRatio._intervals[1:]:
         assert interval > last
         last = interval
 
