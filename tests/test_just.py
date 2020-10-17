@@ -1,6 +1,6 @@
 import pytest
 
-from interval import State, JustRatio
+from just_midi.interval import State, JustRatio
 
 
 def test_intervals():

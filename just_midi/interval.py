@@ -70,5 +70,7 @@ class JustRatio(AbstractRatio):
     _intervals = [1., 256 / 243, 9 / 8, 6 / 5, 5 / 4, 4 / 3, 25 / 18, 3 / 2, 8 / 5, 5 / 3, 9 / 5, 15 / 8, 2.]
 
 
-def _compute_equal_temperament_ratio(n_semitones):
-    is_negative = n_semitones < 0
+class EqualTemperamentRatio(AbstractRatio):
+    @property
+    def interval_ratio(self):
+        return 2 ** (self.remainder / 12)

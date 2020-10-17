@@ -25,10 +25,17 @@ def pitch_bend(value, channel=0):
 
 if __name__ == "__main__":
     pitch_bend(0)
+    print("zero")
     play_note()
     time.sleep(1)
     stop_note()
     pitch_bend(8191)
+    print("bent")
     play_note()
     time.sleep(1)
     stop_note()
+    pitch_bend(0)
+    print("two")
+    play_note(note=52)
+    time.sleep(1)
+    stop_note(note=52)
