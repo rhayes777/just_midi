@@ -4,19 +4,39 @@ from abc import abstractmethod
 
 class State:
     def __init__(self, frequency, note):
-        self.frequency = frequency
-        self.note = note
+        self._frequency = frequency
+        self._note = note
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__} {self.note} {self.frequency}>"
+
+    @property
+    def frequency(self):
+        return self._frequency
+
+    @property
+    def note(self):
+        return self._note
+
+    @note.setter
+    def note(self, note):
+        self._frequency = self._compute_frequency(note)
+        self._note = note
+
+    def _compute_frequency(self, note):
+        n_semitones = note - self.note
+        return self.frequency * JustRatio(n_semitones)
 
     def __call__(self, note):
-        n_semitones = note - self.note
-        self.note = note
-        self.frequency *= JustRatio(n_semitones)
-        return self.frequency
+        return self._compute_frequency(note)
 
 
 class AbstractRatio:
     def __init__(self, n_semitones):
         self._n_semitones = n_semitones
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__} {self._n_semitones} -> {self.ratio}>"
 
     @property
     def _abs_semitones(self):
@@ -90,6 +110,9 @@ class Note:
 
     def __init__(self, frequency):
         self.frequency = frequency
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__} {self.frequency}>"
 
     def __float__(self):
         return 12 * (math.log2(self.frequency) - math.log2(self.base_frequency))

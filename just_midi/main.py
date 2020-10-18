@@ -57,6 +57,7 @@ class JustOutput:
         note = message.note
         state = self._get_state(note)
         frequency = state(note)
+        state.note = note
         new_note = i.Note(frequency)
         self._bend(
             new_note=new_note,

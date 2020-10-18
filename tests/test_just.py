@@ -51,6 +51,8 @@ def test_simple(
         state
 ):
     assert state(note) == ratio
+
+    state.note = note
     assert state.frequency == ratio
     assert state.note == note
 
@@ -75,11 +77,13 @@ def test_inverse(
 ):
     state = State(1, 0)
     assert state(note) == ratio
+
+    state.note = note
     assert state.frequency == ratio
     assert state.note == note
 
 
 def test_shift(state):
-    state(2)
-    state(1)
+    state.note = 2
+    state.note = 1
     assert state(0) != 1
