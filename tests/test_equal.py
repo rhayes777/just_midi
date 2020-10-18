@@ -45,6 +45,6 @@ def test_frequency_for_note_number(
 def test_note_number_for_frequency(
         number, frequency
 ):
-    assert interval.note_number_for_frequency(
+    assert interval.Note(
         frequency
     ) == pytest.approx(number, abs=0.01)

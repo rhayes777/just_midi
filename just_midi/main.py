@@ -21,8 +21,7 @@ class JustOutput:
         self._state = None
         self._output = output_
 
-    def send(self, message):
-        note = message.note
+    def _get_state(self, note):
         if self._state is None:
             self._state = i.State(
                 frequency=i.frequency_for_note_number(
@@ -30,14 +29,11 @@ class JustOutput:
                 ),
                 note=note
             )
-        frequency = self._state(note)
-        note_number = i.note_number_for_frequency(
-            frequency
-        )
-        remainder = note_number % 1
-        note = int(note_number)
+        return self._state
+
+    def _bend(self, new_note, message):
         bend = int(
-            remainder * PITCHWHEEL_SEMITONE
+            new_note.remainder * PITCHWHEEL_SEMITONE
         )
         self._output.send(
             mido.Message(
@@ -46,17 +42,30 @@ class JustOutput:
                 channel=message.channel
             )
         )
+
+    def _send_note(self, new_note, message):
         self._output.send(
             mido.Message(
                 message.type,
-                note=note,
-                velocity=message.velocity
+                note=int(new_note),
+                velocity=message.velocity,
+                channel=message.channel
             )
         )
 
-
-def pitch_bend(value, channel=0):
-    output.send(mido.Message('pitchwheel', pitch=value, channel=channel))
+    def send(self, message):
+        note = message.note
+        state = self._get_state(note)
+        frequency = state(note)
+        new_note = i.Note(frequency)
+        self._bend(
+            new_note=new_note,
+            message=message
+        )
+        self._send_note(
+            new_note=int(new_note),
+            message=message
+        )
 
 
 class Runner:

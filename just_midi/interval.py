@@ -85,8 +85,21 @@ def frequency_for_note_number(number):
     )
 
 
-base_frequency = frequency_for_note_number(0)
+class Note:
+    base_frequency = frequency_for_note_number(0)
 
+    def __init__(self, frequency):
+        self.frequency = frequency
 
-def note_number_for_frequency(frequency):
-    return 12 * (math.log2(frequency) - math.log2(base_frequency))
+    def __float__(self):
+        return 12 * (math.log2(self.frequency) - math.log2(self.base_frequency))
+
+    def __eq__(self, other):
+        return float(self) == other
+
+    def __int__(self):
+        return int(float(self))
+
+    @property
+    def remainder(self):
+        return float(self) - int(self)
