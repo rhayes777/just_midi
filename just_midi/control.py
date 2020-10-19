@@ -47,17 +47,20 @@ class Input:
         messages = list()
         events = pygame.event.get()
         for event in events:
-            if event.type in self.type_map and event.key in self.note_map:
-                message_type = self.type_map[event.type]
-                note = self.note_map[event.key]
-                messages.append(
-                    mido.Message(
-                        message_type,
-                        channel=self.channel,
-                        note=note,
-                        velocity=self.velocity
+            try:
+                if event.type in self.type_map and event.key in self.note_map:
+                    message_type = self.type_map[event.type]
+                    note = self.note_map[event.key]
+                    messages.append(
+                        mido.Message(
+                            message_type,
+                            channel=self.channel,
+                            note=note,
+                            velocity=self.velocity
+                        )
                     )
-                )
-            if event.key == pygame.K_ESCAPE:
-                raise StopPlay()
+                if event.key == pygame.K_ESCAPE:
+                    raise StopPlay()
+            except AttributeError:
+                print("Attribute error")
         return messages
